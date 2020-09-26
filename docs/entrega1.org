@@ -1,18 +1,60 @@
 #+TITLE: Desenvolvimento de um banco de dados para um sistema de entregas: Primeira fase
-#+AUTHOR: Leon F. Bellini (22218002-8), Felipe M. de  Sousa (22218042-4), Guilherme O.Sampaio (22218007-7)
+#+AUTHOR: Leon F. Bellini (22218002-8), Felipe M. de Sousa (22218042-4), Guilherme O.Sampaio (22218007-7)
 #+OPTIONS: toc:nil date:nil
 #+LATEX_HEADER: \usepackage{geometry}
-#+LATEX_HEADER: \geometry{a4paper, left=1cm, right=1cm, top=2cm, bottom=2cm}
+#+LATEX_HEADER: \geometry{a4paper, left=2cm, right=2cm, top=3cm, bottom=2cm}
 
 * Descrição
   Uma agência transportadora de entregas chamada *Dicey* planeja desenvolver um sistema
-  banco de dados para gerir seu complexo fluxo de entrada e saída de pacotes, encomendas
-  de tamanhos variados, bem como os entregadores envolvidos. No caso, é requerido
-  que cada entregador utilize seu próprio veículo bem como a habilitação para tal,
-  cada um desses possuindo características específicas as quais determinam que tipo
-  de entrega será repassada para o dono. É importante também notar que os entregadores
-  *não são vinculados* a um Centro de Distribuição específico, realizando entregas
-  "intermediárias" para o *CD* especificado na rota designada para tal entrega.
+  banco de dados para gerir seu complexo fluxo de entrada e saída de pacotes, assim como encomendas
+  de tamanhos variados e entregadores envolvidos. Para resolver tal problema, a
+  criação de um diagrama relacional o qual possa descrever os processos envolvidos
+  na transmissão de entregas por entre sua "rede" de entregas física. 
   
+** A Determinação das entidades
+   Os membros mais relevantes num sistema de entrega foram inicialmente separados
+   durante a fase de planejamento. Todos estes têm papel fundamental no sistema
+   e possuem um ou mais atributos inerentes a estas entidades, podendo também,
+   justificar a existência dos mesmos, como se pode observar nas especializações
+   de *Pessoa*, *Pessoa física* (P\_ fisica) e *Pessoa jurídica* (P\_ juridica),
+   uma vez que as entregas podem ser registradas sobre um CNPJ ou CPF. De
+   maneira similar, as subclasses derivadas dos veículos dos entregadores: *Carro*, *Moto* e *Caminhão*,
+   nos quais estão presentes os atributos que auxiliam a companhia a separar as encomendas
+   dependendo de suas naturezas como, por exemplo, 
+   se estas forem expressas (depende, então da velocidade da moto), se esta for destinada
+   para uma área de risco (a blindagem ou não do carro é de extrema importância para garantir a segurança do pacote)
+   ou for considerada um lote (caminhão).
+
+   Além do mais, o "foco" de qualquer sistema de entregas é, exatamente,
+   a *Entrega* em si. Neste contexto, cada entrega pode ser realizada por
+   um *Entregador* contendo um ou mais *Pacote(s)*, todas entregas são, inicialmente, armazenadas
+   em um *Centro de distribuição* especificado em suas determinadas rota.
+   Uma entrega pode passar por mais de um Centro de distribuição.
+
+   Uma das regras determinadas na formação da empresa é que *cada entregador deve utilizar seu próprio veículo*,
+   empresa não teria que arcar com os custos de armazenamento de 
+   veículos, bem como o registros destes no banco de dados.
+   Além disso, *nenhum entregador é vinculado a um Centro de distribuição*. Estes
+  devem realizar as entregas *para o CD mais próximo/determinado na rota*
+   *ou para o cliente final*, dinamizando, por fim, o sistema de transporte e
+   se aproveitando da posição "atual" do entregador.\\
+
+   
+   O universo de discurso de nosso sistema *D*, pode então ser resumido como:
+
+   \[ \textbf{D} = \{Centro\_ distribuicao, Entregador, Veiculo, Pessoa, Pacote\} \]
+
+   \begin{center}
+   onde
+   \end{center}
+   \[Pessoa = \{P\_ fisica, P\_ juridica\}\]
+   \begin{center}
+   e
+   \end{center}
+   \[Veiculo = \{Carro, Moto, Caminhao\}\]
+
+   
 * O modelo
-[[file:~/Estudo/banco/dicey/imgs/diagrama.png]]
+[[file:../imgs/diagrama.png]]
+* Onde encontrar o projeto
+  - [[https://github.com/sociedade-do-pastel/dicey][Página do projeto no GitHub]]
