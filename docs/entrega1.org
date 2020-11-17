@@ -1,60 +1,234 @@
-#+TITLE: Desenvolvimento de um banco de dados para um sistema de entregas: Primeira fase
+#+TITLE: Desenvolvimento de um banco de dados para um sistema de entregas: Segunda fase
 #+AUTHOR: Leon F. Bellini (22218002-8), Felipe M. de Sousa (22218042-4), Guilherme O.Sampaio (22218007-7)
-#+OPTIONS: toc:nil date:nil
+#+OPTIONS: toc:nil date:nil author:nil
 #+LATEX_HEADER: \usepackage{geometry}
-#+LATEX_HEADER: \geometry{a4paper, left=2cm, right=2cm, top=3cm, bottom=2cm}
+#+LATEX_HEADER: \geometry{a4paper, left=2cm, right=1cm, top=3cm, bottom=2cm}
+#+LATEX_HEADER: \author{Leon F. Bellini\\\textbf{22218002-8}\and Guilherme O. Sampaio\\\textbf{22218007-7}\and Felipe M. Sousa\\\textbf{22218042-4}}
+
 
 * Descrição
-  Uma agência transportadora de entregas chamada *Dicey* planeja desenvolver um sistema
-  banco de dados para gerir seu complexo fluxo de entrada e saída de pacotes, assim como encomendas
-  de tamanhos variados e entregadores envolvidos. Para resolver tal problema, a
-  criação de um diagrama relacional o qual possa descrever os processos envolvidos
-  na transmissão de entregas por entre sua "rede" de entregas física. 
-  
+  Uma agência transportadora de entregas chamada *Dicey* planeja desenvolver
+  um sistema de 
+  banco de dados para gerir seu complexo fluxo de entrada e saída de pacotes,
+  assim como encomendas
+  de tamanhos variados e os funcionários (entregadores) envolvidos. Para resolver
+  tal problema, foi determinado que um processo de modelação do
+  banco do banco de dados ocorra antes da implementação. 
+    
 ** A Determinação das entidades
    Os membros mais relevantes num sistema de entrega foram inicialmente separados
    durante a fase de planejamento. Todos estes têm papel fundamental no sistema
    e possuem um ou mais atributos inerentes a estas entidades, podendo também,
-   justificar a existência dos mesmos, como se pode observar nas especializações
-   de *Pessoa*, *Pessoa física* (P\_ fisica) e *Pessoa jurídica* (P\_ juridica),
-   uma vez que as entregas podem ser registradas sobre um CNPJ ou CPF. De
-   maneira similar, as subclasses derivadas dos veículos dos entregadores: *Carro*, *Moto* e *Caminhão*,
-   nos quais estão presentes os atributos que auxiliam a companhia a separar as encomendas
-   dependendo de suas naturezas como, por exemplo, 
-   se estas forem expressas (depende, então da velocidade da moto), se esta for destinada
-   para uma área de risco (a blindagem ou não do carro é de extrema importância para garantir a segurança do pacote)
-   ou for considerada um lote (caminhão).
+   justificar a existência dos mesmos, como se pode observar nas subclasses
+   derivadas dos veículos dos entregadores:
+   *Carro*, *Moto* e *Caminhão*,
+   nos quais estão presentes os atributos que auxiliam a companhia a definir
+   quais os tipos de
+   encomendas
+   vão para os determinados entregadores os quais
+   sejam donos de tais veículos. 
+   Por exemplo,
+   se estas forem expressas (dependendo, então da velocidade de uma moto) ou, se esta for
+   destinada
+   para uma área de risco (a blindagem ou não do carro é de extrema importância
+   para garantir a segurança do pacote)
+   ou se essa  for considerada muito pesada para
+   os outros tipos de veículo para transportar (caminhão).
 
    Além do mais, o "foco" de qualquer sistema de entregas é, exatamente,
    a *Entrega* em si. Neste contexto, cada entrega pode ser realizada por
-   um *Entregador* contendo um ou mais *Pacote(s)*, todas entregas são, inicialmente, armazenadas
+   um *Entregador* contendo um ou mais *Pacote(s)*, todas entregas são,
+   inicialmente, armazenadas
    em um *Centro de distribuição* especificado em suas determinadas rota.
-   Uma entrega pode passar por mais de um Centro de distribuição.
+   Uma entrega pode passar por mais de um Centro de distribuição,
+   mas esta sempre está, durante um determinado período, em
+   apenas um Centro de distribuição. 
 
-   Uma das regras determinadas na formação da empresa é que *cada entregador deve utilizar seu próprio veículo*,
-   empresa não teria que arcar com os custos de armazenamento de 
-   veículos, bem como o registros destes no banco de dados.
-   Além disso, *nenhum entregador é vinculado a um Centro de distribuição*. Estes
-  devem realizar as entregas *para o CD mais próximo/determinado na rota*
-   *ou para o cliente final*, dinamizando, por fim, o sistema de transporte e
-   se aproveitando da posição "atual" do entregador.\\
+   Uma das regras determinadas na formação da empresa é que *cada entregador deve
+   utilizar seu próprio veículo*, uma vez que a
+   empresa não teria que arcar com os custos de armazenamento destes.
+   Além disso, *nenhum entregador é vinculado a um único Centro de distribuição*, podendo
+   prestar serviço para mais de um *CD*. \\
 
    
    O universo de discurso de nosso sistema *D*, pode então ser resumido como:
 
-   \[ \textbf{D} = \{Centro\_ distribuicao, Entregador, Veiculo, Pessoa, Pacote\} \]
+   \[ \textbf{D} = \{Centro\_ distribuicao, Entregador, Veiculo, Pessoa, Pacote, Entrega\} \]
 
    \begin{center}
    onde
    \end{center}
-   \[Pessoa = \{P\_ fisica, P\_ juridica\}\]
-   \begin{center}
-   e
-   \end{center}
    \[Veiculo = \{Carro, Moto, Caminhao\}\]
 
    
-* O modelo
+* O modelo entidade relacionamento.
+  O modelo inicialmente contou com um tipo de atributo incorreto,
+  o atributo derivado, no qual, teoricamente o atributo não seria
+  armazenado em memória, uma vez que este depende diretamente
+  dos valores definidos em outros atributos. No caso, este
+  erro ocorreu
+  três vezes (local de postagem, valor e data de postagem) e todos
+  estes foram corrigidos no modelo entidade relacionamento. 
+  A existência dos valores incorretos pode ser provada nas versões
+  antigas do repositório do projeto no /GitHub/.
+  
+  
+
+
+#+name: modelo_er  
 [[file:../imgs/diagrama.png]]
+
+* Modelo relacional (Tabelas)
+  O seguinte modelo relacional, foi então gerado à partir
+  do modelo ER apresentado em seção anterior ([[modelo_er]]):
+    
+  [[../imgs/modelo_relacional.jpg]]
+
+  Tal modelo relacional foi implementado através ferramenta *StarUML*,
+  nas quais as tabelas foram exportadas para arquivos cujos formatos
+  são *SQL*, compatíveis com o *SGDB* /PostgreSQL/. As regras de
+  transformação utilizadas para determinar a estrutura de
+  cada tabela serão explicitadas a seguir.
+  
+** Regras de transformação
+   Todos os mapeamentos ocorreram de acordo com o material apresentado
+   em aula, algumas alterações, portanto, ocorreram devido ao processo
+   de *normalização* apresentado em seção posterior.
+   
+*** 1:1
+    A única relação do tipo *1:1* é a que ocorre entre um entregador
+    e um veículo, na qual *um entregador dirige apenas um veículo*
+    (no ponto de vista da empresa). Neste caso, o mapeamento ocorreu
+    de forma direta, sem ser definida uma tabela que faça referência ao
+    relacionamento. Para definir melhor este relacionamento
+    numa aplicação real, apenas foi adicionada uma chave estrangeira
+    (cod\_ veiculo) referente
+    ao código do veículo que o entregador seja dono. 
+
+    As categorias específicas para a habilitação
+    de um entregador serão explicitadas na seção para atributos
+    multivalorados, a seção [[Atributo multivalorado]]. 
+
+*** 1:N
+    Neste tipo de relação, também não é adicionada uma tabela extra, entretanto,
+    a entidade com a menor cardinalidade (no caso, o ``1'') recebe
+    a chave primária da entidade com a maior cardinalidade (N). É
+    observável tal decisão no modelo relacional apresentado acima nas
+    entidades, estas são (chaves estrangeiras apresentadas entre parênteses):
+    - Entregador (num\_ entrega)
+    - Entrega (id\_ pessoa, num \_ cd)
+    - Pacote (num \_ entrega, num \_ cd)
+
+*** N:M
+    Para este caso, foi utilizada a técnica de mapeamento cruzado,
+    na qual é criada uma nova tabela para
+    representar o relacionamento e esta 
+    contendo chaves estrangeiras relacionadas às entidades
+    participantes.
+    Dois conjuntos de entidades apresentaram uma relação do
+    tipo N:M, Centro de distribuição \rightarrow Pessoa e Centro
+    de distribuição \rightarrow Entregador:
+    
+**** Centro de distribuição \rightarrow Pessoa 
+     A nova tabela referencia
+     ambas as chaves primárias dos dois fins
+     da relação (CD e Pessoa)
+
+**** Centro de distribuição \rightarrow Entregador
+     A tabela para o relacionamento referencia
+     tanto o número do centro de distribuição quanto o
+     número de identificação do entregador. Este
+     tipo de disposição dos dados facilita no momento
+     em que é necessário se obter o número total
+     de entregadores os quais trabalham para um
+     centro de distribuição.
+    
+*** Atributo multivalorado
+    Há a presença de apenas um atributo multivalorado, este
+    sendo *Habilitação*. No caso, uma tabela a mais
+    foi criada para definir inúmeras categorias de veículos
+    para um entregador, como por exemplo, um entregador *X* pode
+    ter tanto uma habilitação para carro *B* quanto uma para
+    caminhão de seis eixos *D*. Cada entregador *E*, como dito
+    na subseção anterior, possui uma chave primária
+    *num\_ identificacao* referenciada na tabela pela
+    chave estrangeira *num_entregador*, garantindo
+    que seja possível obter a partir de um entregador o
+    tipo de sua habilitação para um determinado veículo. 
+
+*** Especialização
+    Observa-se apenas uma especialização, esta sendo
+    disjunta (cada entidade pode ser apenas de uma subclasse),
+    onde um veículo pode ser de três tipos
+    diferentes, carro, moto ou caminhão. Cada tipo possuindo
+    um atributo especial o qual justifica a especialização.
+    Para o carro há a blindagem, moto, a sua velocidade
+    e o caminhão é especial devido ao seu número de
+    eixos.
+    
+** Normalização
+   Após a criação de cada tabela, o grupo ainda observou
+   a necessidade de realizar o processo de normalização
+   (até a primeira forma), como por exemplo na entidade *pessoa*,
+   o endereço, o qual era composto anteriormente,
+   foi dividido em três únicos atributos, número, bairro,
+   rua e *CEP*. 
+   
+*** Adaptações no esquema
+    Para facilitar o trabalho com a entidade *Pessoa* esta foi
+    modificada para não gerar mais duas subclasses.
+    Foi, então, criada uma coluna *cpfcnpj* para cobrir as ações
+    de ambos os tipos de pessoa, física e jurídica. As outras
+    colunas continuam sendo as mesmas. 
+    
+* Comandos realizados
+  Como afirmado em seção anterior, a criação das tabelas durante a
+  fase de Definição (*DDL*) foi realizada totalmente através do
+  programa *StarUML*, seu /output/ pode ser observado a seguir:
+
+** DDL
+*** Create database
+    #+include: ../queries/create_table/db_create.sql src sql
+   
+*** Drop database
+    #+include: ../queries/create_table/db_drop.sql src sql
+
+   
+*** Create table
+    #+include: ../queries/create_table/data_model_table_create.sql src sql
+   
+*** Drop table
+    Nota-se que para todo drop, o *StarUML* ainda insere
+    a regra *CASCADE* a qual garante que todas as suas
+    dependências também sejam apagadas.
+    
+    #+include: ../queries/create_table/data_model_table_drop.sql src sql
+
+** DML
+   Por sua vez, os *INSERTs* realizados foram todos incluídos num
+   único arquivo, sendo estes:
+   
+   #+include: ../queries/queries.sql src sql
+
+* Proposta de /query/ pela professora
+ #+begin_quote
+ Qual o nome dos 3 entregadores que mais realizaram entregas. Indicar o nome,
+ o tipo de veículo que dirige e o prazo medio de suas entregas e o centro de
+ distribuição que ele atua.
+ #+end_quote
+
+** A /query/ definida através da proposta
+   #+include: ../queries/query_proposta.sql src sql
+   
+** Resultado
+   A coluna gerada pelo comando
+   *COUNT*, numero\_ entrega determina quantas entregas foram
+   realizadas por um entregador. O prazo também é gerado dinamicamente
+   pelo comando para média *AVG*. 
+
+ [[../imgs/resultado_query.jpg]] 
+
+  
+     
 * Onde encontrar o projeto
   - [[https://github.com/sociedade-do-pastel/dicey][Página do projeto no GitHub]]

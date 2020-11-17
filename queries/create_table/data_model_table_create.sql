@@ -21,10 +21,11 @@ CREATE TABLE public.entrega (
     num_entrega integer NOT NULL,
     num_cd integer NOT NULL,
     id_pessoa integer NOT NULL,
-    prazo timestamp with time zone NOT NULL,
+    num_entregador integer NOT NULL,
+    prazo integer NOT NULL,
     tipo varchar(100) NOT NULL,
     valor real NOT NULL,
-    data_recebimento timestamp without time zone NOT NULL,
+    data_recebimento timestamp without time zone default null ,
     PRIMARY KEY (num_entrega)
 );
 
@@ -32,12 +33,14 @@ CREATE INDEX ON public.entrega
     (num_cd);
 CREATE INDEX ON public.entrega
     (id_pessoa);
+CREATE INDEX ON public.entrega
+    (num_entregador);
 
 
 CREATE TABLE public.centro_distribuicao (
     numero integer NOT NULL,
     rua varchar(1000) NOT NULL,
-    numero integer NOT NULL,
+    numero_casa integer NOT NULL,
     bairro varchar(100) NOT NULL,
     cep integer NOT NULL,
     PRIMARY KEY (numero)
@@ -46,14 +49,12 @@ CREATE TABLE public.centro_distribuicao (
 
 CREATE TABLE public.entregador (
     num_identificacao integer NOT NULL,
-    num_entrega integer NOT NULL,
     cod_veiculo integer NOT NULL,
-    cpf_entregador integer NOT NULL,
+    cpf_entregador bigint NOT NULL,
+    nome varchar(100) NOT NULL,
     PRIMARY KEY (num_identificacao)
 );
 
-CREATE INDEX ON public.entregador
-    (num_entrega);
 CREATE INDEX ON public.entregador
     (cod_veiculo);
 
@@ -75,10 +76,10 @@ CREATE TABLE public.pessoa (
     tipo varchar(10) NOT NULL,
     nome varchar(100) NOT NULL,
     rua varchar(100) NOT NULL,
-    numero integer NOT NULL,
+    numero bigint NOT NULL,
     bairro varchar(100) NOT NULL,
-    cep integer NOT NULL,
-    cpfcnpj integer NOT NULL,
+    cep bigint NOT NULL,
+    cpfcnpj bigint NOT NULL,
     PRIMARY KEY (id_pessoa)
 );
 
@@ -100,9 +101,9 @@ CREATE TABLE public.veiculo (
 
 
 CREATE TABLE public.carro (
+    cod_veiculo integer NOT NULL,
     categoria varchar(100) NOT NULL,
-    blindado boolean NOT NULL,
-    cod_veiculo integer NOT NULL
+    blindado boolean NOT NULL
 );
 
 CREATE INDEX ON public.carro
@@ -110,8 +111,8 @@ CREATE INDEX ON public.carro
 
 
 CREATE TABLE public.moto (
-    velocidade_max integer NOT NULL,
-    cod_veiculo integer NOT NULL
+    cod_veiculo integer NOT NULL,
+    velocidade_max integer NOT NULL
 );
 
 CREATE INDEX ON public.moto
@@ -119,9 +120,9 @@ CREATE INDEX ON public.moto
 
 
 CREATE TABLE public.caminhao (
+    cod_veiculo integer NOT NULL,
     num_eixos integer NOT NULL,
-    refrigerado boolean NOT NULL,
-    cod_veiculo integer NOT NULL
+    refrigerado boolean NOT NULL
 );
 
 CREATE INDEX ON public.caminhao
@@ -162,15 +163,33 @@ CREATE INDEX ON public.habilitacao
     (num_entregador);
 
 
-ALTER TABLE public.pacote ADD CONSTRAINT FK_pacote__num_entrega FOREIGN KEY (num_entrega) REFERENCES public.entrega(num_entrega);
-ALTER TABLE public.pacote ADD CONSTRAINT FK_pacote__num_cd FOREIGN KEY (num_cd) REFERENCES public.centro_distribuicao(numero);
-ALTER TABLE public.entrega ADD CONSTRAINT FK_entrega__num_cd FOREIGN KEY (num_cd) REFERENCES public.centro_distribuicao(numero);
-ALTER TABLE public.entrega ADD CONSTRAINT FK_entrega__id_pessoa FOREIGN KEY (id_pessoa) REFERENCES public.pessoa(id_pessoa);
-ALTER TABLE public.carro ADD CONSTRAINT FK_carro__cod_veiculo FOREIGN KEY (cod_veiculo) REFERENCES public.veiculo(cod_veiculo);
-ALTER TABLE public.moto ADD CONSTRAINT FK_moto__cod_veiculo FOREIGN KEY (cod_veiculo) REFERENCES public.veiculo(cod_veiculo);
-ALTER TABLE public.caminhao ADD CONSTRAINT FK_caminhao__cod_veiculo FOREIGN KEY (cod_veiculo) REFERENCES public.veiculo(cod_veiculo);
-ALTER TABLE public.centro_distribuicao_pessoa ADD CONSTRAINT FK_centro_distribuicao_pessoa__id_pessoa FOREIGN KEY (id_pessoa) REFERENCES public.pessoa(id_pessoa);
-ALTER TABLE public.centro_distribuicao_pessoa ADD CONSTRAINT FK_centro_distribuicao_pessoa__numero_cd FOREIGN KEY (numero_cd) REFERENCES public.centro_distribuicao(numero);
-ALTER TABLE public.centro_distribuicao_entregador ADD CONSTRAINT FK_centro_distribuicao_entregador__numero_cd FOREIGN KEY (numero_cd) REFERENCES public.centro_distribuicao(numero);
-ALTER TABLE public.centro_distribuicao_entregador ADD CONSTRAINT FK_centro_distribuicao_entregador__num_entregador FOREIGN KEY (num_entregador) REFERENCES public.entregador(num_identificacao);
-ALTER TABLE public.habilitacao ADD CONSTRAINT FK_habilitacao__num_entregador FOREIGN KEY (num_entregador) REFERENCES public.entregador(num_identificacao);
+ALTER TABLE public.pacote ADD CONSTRAINT FK_pacote__num_entrega
+FOREIGN KEY (num_entrega) REFERENCES public.entrega(num_entrega);
+ALTER TABLE public.pacote ADD CONSTRAINT FK_pacote__num_cd
+FOREIGN KEY (num_cd) REFERENCES public.centro_distribuicao(numero);
+ALTER TABLE public.entrega ADD CONSTRAINT FK_entrega__num_cd
+FOREIGN KEY (num_cd) REFERENCES public.centro_distribuicao(numero);
+ALTER TABLE public.entrega ADD CONSTRAINT FK_entrega__id_pessoa
+FOREIGN KEY (id_pessoa) REFERENCES public.pessoa(id_pessoa);
+ALTER TABLE public.entrega ADD CONSTRAINT FK_entrega__num_entregador
+FOREIGN KEY (num_entregador) REFERENCES public.entregador(num_identificacao);
+ALTER TABLE public.carro ADD CONSTRAINT FK_carro__cod_veiculo
+FOREIGN KEY (cod_veiculo) REFERENCES public.veiculo(cod_veiculo);
+ALTER TABLE public.moto ADD CONSTRAINT FK_moto__cod_veiculo
+FOREIGN KEY (cod_veiculo) REFERENCES public.veiculo(cod_veiculo);
+ALTER TABLE public.caminhao ADD CONSTRAINT FK_caminhao__cod_veiculo
+FOREIGN KEY (cod_veiculo) REFERENCES public.veiculo(cod_veiculo);
+ALTER TABLE public.centro_distribuicao_pessoa ADD CONSTRAINT
+FK_centro_distribuicao_pessoa__id_pessoa FOREIGN KEY (id_pessoa)
+REFERENCES public.pessoa(id_pessoa);
+ALTER TABLE public.centro_distribuicao_pessoa ADD CONSTRAINT
+FK_centro_distribuicao_pessoa__numero_cd FOREIGN KEY (numero_cd)
+REFERENCES public.centro_distribuicao(numero);
+ALTER TABLE public.centro_distribuicao_entregador ADD CONSTRAINT
+FK_centro_distribuicao_entregador__numero_cd FOREIGN KEY (numero_cd)
+REFERENCES public.centro_distribuicao(numero);
+ALTER TABLE public.centro_distribuicao_entregador ADD CONSTRAINT
+FK_centro_distribuicao_entregador__num_entregador FOREIGN KEY (num_entregador)
+REFERENCES public.entregador(num_identificacao);
+ALTER TABLE public.habilitacao ADD CONSTRAINT FK_habilitacao__num_entregador
+FOREIGN KEY (num_entregador) REFERENCES public.entregador(num_identificacao);
