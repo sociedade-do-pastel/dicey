@@ -2,6 +2,7 @@
 #+AUTHOR: Leon F. Bellini (22218002-8), Felipe M. de Sousa (22218042-4), Guilherme O.Sampaio (22218007-7)
 #+OPTIONS: toc:nil date:nil author:nil
 #+LATEX_HEADER: \usepackage{geometry}
+#+LATEX_HEADER: \usepackage{indentfirst}
 #+LATEX_HEADER: \geometry{a4paper, left=2cm, right=1cm, top=3cm, bottom=2cm}
 #+LATEX_HEADER: \author{Leon F. Bellini\\\textbf{22218002-8}\and Guilherme O. Sampaio\\\textbf{22218007-7}\and Felipe M. Sousa\\\textbf{22218042-4}}
 
@@ -102,7 +103,7 @@
     de forma direta, sem ser definida uma tabela que faça referência ao
     relacionamento. Para definir melhor este relacionamento
     numa aplicação real, apenas foi adicionada uma chave estrangeira
-    (cod\_ veiculo) referente
+    (cod\under{}veiculo) referente
     ao código do veículo que o entregador seja dono. 
 
     As categorias específicas para a habilitação
@@ -115,9 +116,9 @@
     a chave primária da entidade com a maior cardinalidade (N). É
     observável tal decisão no modelo relacional apresentado acima nas
     entidades, estas são (chaves estrangeiras apresentadas entre parênteses):
-    - Entregador (num\_ entrega)
-    - Entrega (id\_ pessoa, num \_ cd)
-    - Pacote (num \_ entrega, num \_ cd)
+    - Entregador (num\under{}entrega)
+    - Entrega (id\under{}pessoa, num\under{}cd)
+    - Pacote (num\under{}entrega, num\under{}cd)
 
 *** N:M
     Para este caso, foi utilizada a técnica de mapeamento cruzado,
@@ -151,8 +152,8 @@
     ter tanto uma habilitação para carro *B* quanto uma para
     caminhão de seis eixos *D*. Cada entregador *E*, como dito
     na subseção anterior, possui uma chave primária
-    *num\_ identificacao* referenciada na tabela pela
-    chave estrangeira *num_entregador*, garantindo
+    *num\under{}identificacao* referenciada na tabela pela
+    chave estrangeira *num\under{}entregador*, garantindo
     que seja possível obter a partir de um entregador o
     tipo de sua habilitação para um determinado veículo. 
 
@@ -222,7 +223,7 @@
    
 ** Resultado
    A coluna gerada pelo comando
-   *COUNT*, numero\_ entrega determina quantas entregas foram
+   *COUNT*, numero\under{}entrega determina quantas entregas foram
    realizadas por um entregador. O prazo também é gerado dinamicamente
    pelo comando para média *AVG*. 
 
